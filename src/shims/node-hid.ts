@@ -10,13 +10,13 @@ const globalBuffer: {
 const eventWaitBuffer: {
   [path: string]: ((a: Uint8Array) => void)[];
 } = {};
-const filterHIDDevices = (devices: HIDDevice[]) =>
-  devices.filter((device) =>
-    device.collections?.some(
-      (collection) =>
-        collection.usage === 0x61 && collection.usagePage === 0xff60,
-    ),
-  );
+const filterHIDDevices = (devices: HIDDevice[]) => devices
+  // devices.filter((device) =>
+  //   device.collections?.some(
+  //     (collection) =>
+  //       collection.usage === 0x61 && collection.usagePage === 0xff60,
+  //   ),
+  // );
 
 const getVIAPathIdentifier = () =>
   (self.crypto && self.crypto.randomUUID && self.crypto.randomUUID()) ||
@@ -52,14 +52,15 @@ export const tryForgetDevice = (device: ConnectedDevice | AuthorizedDevice) => {
 const ExtendedHID = {
   _cache: {} as {[key: string]: WebVIADevice},
   requestDevice: async () => {
-    const requestedDevice = await navigator.hid.requestDevice({
-      filters: [
-        {
-          usagePage: 0xff60,
-          usage: 0x61,
-        },
-      ],
-    });
+    const requestedDevice = await navigator.hid.requestDevice({ filters: [] });
+    // await navigator.hid.requestDevice({
+    //   filters: [
+    //     {
+    //       usagePage: 0xff60,
+    //       usage: 0x61,
+    //     },
+    //   ],
+    // });
     requestedDevice.forEach(tagDevice);
     return requestedDevice[0];
   },
